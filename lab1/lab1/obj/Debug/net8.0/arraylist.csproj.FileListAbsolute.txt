@@ -1,4 +1,0 @@
-C:\Users\---\Desktop\tehprog\lab1\lab1\obj\Debug\net8.0\arraylist.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\---\Desktop\tehprog\lab1\lab1\obj\Debug\net8.0\arraylist.AssemblyInfoInputs.cache
-C:\Users\---\Desktop\tehprog\lab1\lab1\obj\Debug\net8.0\arraylist.AssemblyInfo.cs
-C:\Users\---\Desktop\tehprog\lab1\lab1\obj\Debug\net8.0\arraylist.csproj.CoreCompileInputs.cache
