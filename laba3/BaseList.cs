@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 
 namespace lab1
 {
@@ -97,9 +97,10 @@ namespace lab1
                     }
                 }
             }
-            catch (IOException)
+            catch (BadFileException)
             {
-                throw new BadFileException("Error while loading from file.");
+                ExceptionCounter.IncrementChainExceptionCount();
+                return;
             }
         }
 
@@ -121,9 +122,10 @@ namespace lab1
                     }
                 }
             }
-            catch (IOException)
+            catch (BadFileException)
             {
-                throw new BadFileException("Error while loading from file.");
+                ExceptionCounter.IncrementChainExceptionCount();
+                return;
             }
         }
 
