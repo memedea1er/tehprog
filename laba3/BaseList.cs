@@ -4,6 +4,14 @@ namespace lab1
 {
     public abstract class BaseList<T> : IEnumerable<T> where T : IComparable<T>
     {
+        public delegate void ListChangedEventHandler(object sender, ActionEventArgs e);
+
+        // События
+        public event ListChangedEventHandler ItemAdded;
+        public event ListChangedEventHandler ItemInserted;
+        public event ListChangedEventHandler ItemDeleted;
+        public event ListChangedEventHandler ListCleared;
+
         protected int count;
 
         public int Count
@@ -28,6 +36,26 @@ namespace lab1
                 Console.Write(a + " ");
             }
             Console.WriteLine();
+        }
+
+        protected virtual void OnItemAdded(T item)
+        {
+            ItemAdded?.Invoke(this, new ActionEventArgs("Item Added"));
+        }
+
+        protected virtual void OnItemInserted(int pos, T item)
+        {
+            ItemInserted?.Invoke(this, new ActionEventArgs("Item Inserted at position " + pos));
+        }
+
+        protected virtual void OnItemDeleted(int pos)
+        {
+            ItemDeleted?.Invoke(this, new ActionEventArgs("Item Deleted from position " + pos));
+        }
+
+        protected virtual void OnListCleared()
+        {
+            ListCleared?.Invoke(this, new ActionEventArgs("List Cleared"));
         }
 
         public void Assign(BaseList<T> source)
@@ -99,7 +127,7 @@ namespace lab1
             }
             catch (BadFileException)
             {
-                ExceptionCounter.IncrementChainExceptionCount();
+                ExceptionCounter.IncrementArrayExceptionCount();
                 return;
             }
         }
@@ -124,7 +152,7 @@ namespace lab1
             }
             catch (BadFileException)
             {
-                ExceptionCounter.IncrementChainExceptionCount();
+                ExceptionCounter.IncrementArrayExceptionCount();
                 return;
             }
         }
@@ -148,19 +176,6 @@ namespace lab1
             }
             return list;
         }
-        public class BadIndexException : Exception
-        {
-            public BadIndexException() : base("exception")
-            {
-            }
-        }
-
-        public class BadFileException : Exception
-        {
-            public BadFileException() : base("exception")
-            {
-            }
-        }
 
         public class ExceptionCounter
         {
@@ -178,16 +193,6 @@ namespace lab1
             public static void IncrementArrayExceptionCount()
             {
                 ArrayExceptioncount++;
-            }
-        }
-
-        public class ActionEventArgs : EventArgs
-        {
-            public string Action { get; private set; }
-
-            public ActionEventArgs(string action)
-            {
-                Action = action;
             }
         }
         public IEnumerator<T> GetEnumerator()
@@ -230,5 +235,29 @@ namespace lab1
                 // Метод Dispose не требуется в этом примере, но интерфейс IDisposable реализуется для соответствия
             }
         }
+    }
+}
+
+public class BadIndexException : Exception
+{
+    public BadIndexException() : base("exception")
+    {
+    }
+}
+
+public class BadFileException : Exception
+{
+    public BadFileException() : base("exception")
+    {
+    }
+}
+
+public class ActionEventArgs : EventArgs
+{
+    public string Action { get; private set; }
+
+    public ActionEventArgs(string action)
+    {
+        Action = action;
     }
 }
