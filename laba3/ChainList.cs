@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Reflection;
 
@@ -32,106 +32,74 @@ namespace lab1
                 lastNode.Next = new Node(data, null);
             }
             count++;
+            OnItemAdded(data);
         }
 
         public override void Insert(int pos, T data)
         {
-            try
+            if (pos < 0 || pos >= count)
             {
-                if (pos < 0 || pos >= count)
-                {
-                    ExceptionCounter.IncrementChainExceptionCount();
-                    return;
-                }
-                if (pos == 0)
-                {
-                    head = new Node(data, head);
-                }
-                else
-                {
-                    Node prev = Find(pos - 1);
-                    prev.Next = new Node(data, prev.Next);
-                }
-                count++;
+                throw new BadIndexException();
             }
-            catch (BadIndexException)
+            if (pos == 0)
             {
-                ExceptionCounter.IncrementChainExceptionCount();
-                return;
+                head = new Node(data, head);
             }
+            else
+            {
+                Node prev = Find(pos - 1);
+                prev.Next = new Node(data, prev.Next);
+            }
+            count++;
+            OnItemInserted(pos, data);
         }
 
         public override void Delete(int pos)
         {
-            try
+            if (pos < 0 || pos >= count)
             {
-                if (pos < 0 || pos >= count)
-                {
-                    ExceptionCounter.IncrementChainExceptionCount();
-                    return;
-                }
-                if (pos == 0)
-                {
-                    head = head.Next;
-                }
-                else
-                {
-                    Node prev = Find(pos - 1);
-                    prev.Next = prev.Next.Next;
-                }
-                count--;
+                throw new BadIndexException();
             }
-            catch (BadIndexException)
+            if (pos == 0)
             {
-                ExceptionCounter.IncrementChainExceptionCount();
-                return;
+                head = head.Next;
             }
+            else
+            {
+                Node prev = Find(pos - 1);
+                prev.Next = prev.Next.Next;
+            }
+            count--;
+            OnItemDeleted(pos);
         }
 
         public override void Clear()
         {
             head = null;
             count = 0;
+            OnListCleared();
         }
 
         public override T this[int i]
         {
             get
             {
-                try
+                if (i < 0 || i >= count)
                 {
-                    if (i < 0 || i >= count)
-                    {
-                        ExceptionCounter.IncrementChainExceptionCount();
-                        return default(T);
-                    }
-                    Node node = Find(i);
-                    return node.Data;
+                    throw new BadIndexException();
                 }
-                catch (BadIndexException)
-                {
-                    ExceptionCounter.IncrementChainExceptionCount();
-                    return default(T);
-                }
+                Node node = Find(i);
+                return node.Data;
             }
 
             set
             {
-                try
+                if (i < 0 || i >= count)
                 {
-                    if (i < 0 || i >= count)
-                    {
-                        ExceptionCounter.IncrementChainExceptionCount();
-                        return;
-                    }
-                    Node current = Find(i);
-                    current.Data = value;
+                    throw new BadIndexException();
                 }
-                catch (BadIndexException)
-                {
-                    ExceptionCounter.IncrementChainExceptionCount();
-                    return;
-                }
+                Node current = Find(i);
+                current.Data = value;
             }
         }
 
