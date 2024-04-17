@@ -1,4 +1,4 @@
-﻿
+
 using System;
 using System.Reflection;
 
@@ -19,98 +19,65 @@ namespace lab1
             EnsureCapacity();
             array[count] = a;
             count++;
+            OnItemAdded(a);
         }
 
         public override void Insert(int pos, T a)
         {
-            try
+            if (pos < 0 || pos > count)
             {
-                if (pos < 0 || pos > count)
-                {
-                    ExceptionCounter.IncrementArrayExceptionCount();
-                    return;
-                }
-                EnsureCapacity();
-
-                for (int i = count; i > pos; i--)
-                {
-                    array[i] = array[i - 1];
-                }
-
-                array[pos] = a;
-                count++;
+                throw new BadIndexException();
             }
-            catch (BadIndexException)
+            EnsureCapacity();
+
+            for (int i = count; i > pos; i--)
             {
-                ExceptionCounter.IncrementArrayExceptionCount();
-                return;
+                array[i] = array[i - 1];
             }
+
+            array[pos] = a;
+            count++;
+            OnItemInserted(pos, a);
         }
 
         public override void Delete(int pos)
         {
-            try
+            if (pos < 0 || pos >= count)
             {
-                if (pos < 0 || pos >= count)
-                {
-                    ExceptionCounter.IncrementArrayExceptionCount();
-                    return;
-                }
-                for (int i = pos; i < count - 1; i++)
-                {
-                    array[i] = array[i + 1];
-                }
-
-                count--;
+                throw new BadIndexException();
             }
-            catch (BadIndexException)
+            for (int i = pos; i < count - 1; i++)
             {
-                ExceptionCounter.IncrementArrayExceptionCount();
-                return;
+                array[i] = array[i + 1];
             }
+            count--;
+            OnItemDeleted(pos);
         }
 
         public override void Clear()
         {
             Array.Resize(ref array, 0);
             count = 0;
+            OnListCleared();
         }
 
         public override T this[int i]
         {
             get
             {
-                try
+                if (i < 0 || i >= count)
                 {
-                    if (i < 0 || i >= count)
-                    {
-                        ExceptionCounter.IncrementArrayExceptionCount();
-                        return default(T);
-                    }
-                    return array[i];
+                    throw new BadIndexException();
                 }
-                catch (BadIndexException)
-                {
-                    ExceptionCounter.IncrementArrayExceptionCount();
-                    return default(T);
-                }
+                return array[i];
             }
             set
             {
-                try
+                if (i < 0 || i >= count)
                 {
-                    if (i < 0 || i >= count)
-                    {
-                        ExceptionCounter.IncrementArrayExceptionCount();
-                        return;
-                    }
-                    array[i] = value;
+                    throw new BadIndexException();
                 }
-                catch (BadIndexException)
-                {
-                    ExceptionCounter.IncrementArrayExceptionCount();
-                    return;
-                }
+                array[i] = value;
             }
         }
 
