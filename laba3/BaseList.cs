@@ -99,13 +99,10 @@ namespace lab1
 
         public bool IsEqual(BaseList<T> otherList)
         {
-            if (otherList == null)
+            if (Count != otherList.Count)
                 return false;
 
-            if (this.Count != otherList.Count)
-                return false;
-
-            for (int i = 0; i < this.Count; i++)
+            for (int i = 0; i < Count; i++)
             {
                 if (this[i].CompareTo(otherList[i]) != 0)
                     return false;
@@ -115,45 +112,29 @@ namespace lab1
         }
         public void SaveToFile(string fileName)
         {
-            try
+            using (StreamWriter writer = new StreamWriter(fileName))
             {
-                using (StreamWriter writer = new StreamWriter(fileName))
+                for (int i = 0; i < count; i++)
                 {
-                    for (int i = 0; i < count; i++)
-                    {
-                        writer.WriteLine(this[i].ToString());
-                    }
+                    writer.WriteLine(this[i].ToString());
                 }
-            }
-            catch (BadFileException)
-            {
-                ExceptionCounter.IncrementArrayExceptionCount();
-                return;
             }
         }
 
         public void LoadFromFile(string fileName)
         {
-            try
+            Clear();
+            using (StreamReader reader = new StreamReader(fileName))
             {
-                Clear();
-                using (StreamReader reader = new StreamReader(fileName))
+                string line;
+                while ((line = reader.ReadLine()) != null)
                 {
-                    string line;
-                    while ((line = reader.ReadLine()) != null)
+                    if (line.Trim() != "")
                     {
-                        if (line.Trim() != "")
-                        {
-                            T item = (T)Convert.ChangeType(line, typeof(T));
-                            Add(item);
-                        }
+                        T item = (T)Convert.ChangeType(line, typeof(T));
+                        Add(item);
                     }
                 }
-            }
-            catch (BadFileException)
-            {
-                ExceptionCounter.IncrementArrayExceptionCount();
-                return;
             }
         }
 
@@ -164,7 +145,7 @@ namespace lab1
 
         public static bool operator !=(BaseList<T> first, BaseList<T> second)
         {
-            return!first.IsEqual(second);
+            return !first.IsEqual(second);
         }
 
         public static BaseList<T> operator +(BaseList<T> first, BaseList<T> second)
@@ -177,24 +158,6 @@ namespace lab1
             return list;
         }
 
-        public class ExceptionCounter
-        {
-            protected static int ChainExceptioncount = 0;
-            protected static int ArrayExceptioncount = 0;
-
-            public static int ChainExceptionCount { get { return ChainExceptioncount; } }
-            public static int ArrayExceptionCount { get { return ArrayExceptioncount; } }
-
-            public static void IncrementChainExceptionCount()
-            {
-                ChainExceptioncount++;
-            }
-
-            public static void IncrementArrayExceptionCount()
-            {
-                ArrayExceptioncount++;
-            }
-        }
         public IEnumerator<T> GetEnumerator()
         {
             return new BaseListEnumerator(this);
@@ -235,29 +198,44 @@ namespace lab1
                 // Метод Dispose не требуется в этом примере, но интерфейс IDisposable реализуется для соответствия
             }
         }
-    }
-}
+        public void AddArrayListEventHandlers()
+        {
+            ItemAdded += (sender, e) => Console.WriteLine("Элемент был добавлен в ArrayList.");
+            ItemInserted += (sender, e) => Console.WriteLine("Элемент был вставлен в ArrayList.");
+            ItemDeleted += (sender, e) => Console.WriteLine("Элемент был удален из ArrayList.");
+            ListCleared += (sender, e) => Console.WriteLine("ArrayList был очищен.");
+        }
 
-public class BadIndexException : Exception
-{
-    public BadIndexException() : base("exception")
+        public void AddChainListEventHandlers()
+        {
+            ItemAdded += (sender, e) => Console.WriteLine("Элемент был добавлен в ChainList.");
+            ItemInserted += (sender, e) => Console.WriteLine("Элемент был вставлен в ChainList.");
+            ItemDeleted += (sender, e) => Console.WriteLine("Элемент был удален из ChainList.");
+            ListCleared += (sender, e) => Console.WriteLine("ChainList был очищен.");
+        }
+    }
+    public class BadIndexException : Exception
     {
+        public BadIndexException() : base("exception")
+        {
+        }
     }
-}
 
-public class BadFileException : Exception
-{
-    public BadFileException() : base("exception")
+    public class BadFileException : Exception
     {
+        public BadFileException() : base("exception")
+        {
+        }
     }
-}
 
-public class ActionEventArgs : EventArgs
-{
-    public string Action { get; private set; }
-
-    public ActionEventArgs(string action)
+    public class ActionEventArgs : EventArgs
     {
-        Action = action;
+        public string Action { get; private set; }
+
+        public ActionEventArgs(string action)
+        {
+            Action = action;
+        }
     }
+
 }
