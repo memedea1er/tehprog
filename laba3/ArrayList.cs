@@ -24,7 +24,7 @@ namespace lab1
 
         public override void Insert(int pos, T a)
         {
-            if (pos < 0 || pos > count)
+            if (pos < 0 || pos >= count)
             {
                 throw new BadIndexException();
             }
