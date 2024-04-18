@@ -1,227 +1,140 @@
+using System.Collections;
+
 namespace lab1
 {
+    using System;
+
+
     class Program
     {
         static void Main(string[] args)
         {
-            int arr_count_except = 0;
-            int chain_count_except = 0;
             BaseList<char> array = new ArrayList<char>();
             BaseList<char> chain = new ChainList<char>();
 
-            /*array.Add(0);
-            array.Add(1);
-            array.Add(2);
-            Console.WriteLine(array.Duplicate());
-            array.Add(0);
-            Console.WriteLine(array.Duplicate());
+            array.AddArrayListEventHandlers();
+            chain.AddChainListEventHandlers();
 
-            chain.Add(0);
-            chain.Add(1);
-            chain.Add(2);
-            Console.WriteLine(chain.Duplicate());
-            chain.Add(0);
-            Console.WriteLine(chain.Duplicate());*/
+            Random random = new Random();
+            int arrExCount = 0;
+            int linkedExCount = 0;
 
-            Random rnd = new Random();
-            for (int i = 0; i < 15000; i++)
+            for (int i = 0; i < 1000; i++)
             {
-                int operation = rnd.Next(5);
-                char item = (char)('a' + rnd.Next(0, 26));
-                int pos = rnd.Next(100);
+                int operation = random.Next(1, 6);
+                char Data = (char)('a' + random.Next(0, 26));
+                int index = random.Next(0, 50);
+
                 switch (operation)
                 {
-                    case 0:
-                        array.Add(item);
-                        chain.Add(item);
-                        break;
                     case 1:
-                        try
-                        {
-                            array.Delete(pos);
-                        }
-                        catch (BadIndexException)
-                        {
-                            arr_count_except++;
-                        }
-                        try
-                        {
-                            chain.Delete(pos);
-                        }
-                        catch (BadIndexException)
-                        {
-                            chain_count_except++;
-                        }
+                        array.Add(Data);
+                        chain.Add(Data);
                         break;
+
                     case 2:
                         try
                         {
-                            array.Insert(pos, item);
+                            array.Delete(index);
                         }
                         catch (BadIndexException)
                         {
-                            arr_count_except++;
+                            arrExCount++;
+                            Console.WriteLine("Поймано исключение в Delete");
                         }
                         try
                         {
-                            chain.Insert(pos, item);
+                            chain.Delete(index);
                         }
                         catch (BadIndexException)
                         {
-                            chain_count_except++;
+                            linkedExCount++;
+                            Console.WriteLine("Поймано исключение в Delete");
+
                         }
                         break;
+
                     case 3:
+                        try
+                        {
+                            array.Insert(index, Data);
+                        }
+                        catch (BadIndexException)
+                        {
+                            arrExCount++;
+                            Console.WriteLine("Поймано исключение в Insert");
+                        }
+                        try
+                        {
+                            chain.Insert(index, Data);
+                        }
+                        catch (BadIndexException)
+                        {
+                            linkedExCount++;
+                            Console.WriteLine("Поймано исключение в Insert");
+                        }
+                        break;
+
+                    case 4:
                         array.Clear();
                         chain.Clear();
                         break;
-                    case 4:
+
+                    case 5:
                         try
                         {
-                            array[pos] = item;
+                            array[index] = Data;
                         }
                         catch (BadIndexException)
                         {
-                            arr_count_except++;
+                            arrExCount++;
+                            Console.WriteLine("Поймано исключение в Set");
                         }
                         try
                         {
-                            chain[pos] = item;
+                            chain[index] = Data;
                         }
                         catch (BadIndexException)
                         {
-                            chain_count_except++;
+                            linkedExCount++;
+                            Console.WriteLine("Поймано исключение в Set");
                         }
                         break;
                 }
             }
 
-            bool flag = true;
-            if (array.Count == chain.Count)
+            if (array.IsEqual(chain))
             {
-                for (int i = 0; i < chain.Count; i++)
-                {
-                    if (array[i] != chain[i])
-                    {
-                        Console.WriteLine("Test error");
-                        flag = false;
-                        break;
-                    }
-                }
+                Console.WriteLine("\nTest success\nArrayList такой же как и ChainList\n");
             }
             else
             {
-                Console.WriteLine("Test error");
-                flag = false;
-            }
-            if (flag == true)
-            {
-                Console.WriteLine("Test successfull");
+                Console.WriteLine("\nTest error\nArrayList НЕ такой же как и ChainList\n");
             }
 
-            /*Console.WriteLine("\nTesting Clone method:");
+            Console.WriteLine("Элементы ArrayList: ");
+            array.Print();
+            string filename = "test_lab3.txt";
+            array.SaveToFile(filename);
+            BaseList<char> clone = array.Clone();
+            Console.WriteLine($"Считывание с файла {filename}:");
+            clone.LoadFromFile(filename);
+            clone.Print();
 
-            array.Clear();
-            array.Add(1);
-            array.Add(2);
-            array.Add(3);
+            Console.WriteLine("Проверка оператора '=='");
+            if (array == chain) { Console.WriteLine("ArrayList = ChainList\n"); }
+            else { Console.WriteLine("ArrayList != ChainListn\n"); }
 
-            BaseList<int> arrListClone = array.Clone();
+            Console.WriteLine("Проверка оператора '!='");
+            if (array != chain) { Console.WriteLine("ArrayList != ChainList\n"); }
+            else { Console.WriteLine("ArrayList = ChainList\n"); }
 
-            chain.Clear();
-            chain.Add(1);
-            chain.Add(2);
-            chain.Add(3);
+            Console.WriteLine("Проверка оператора '+'");
+            clone.Clear();
+            clone = array + chain;
+            clone.Print();
 
-            BaseList<int> chainListClone = chain.Clone();
-
-            if (chainListClone.IsEqual(chain) && arrListClone.IsEqual(array))
-            {
-                Console.WriteLine("Clone successfull");
-            }
-            else
-            {
-                Console.WriteLine("Clone error");
-            }
-
-            Console.WriteLine("\nTesting Assign method:");
-
-            array.Clear();
-            array.Add(1);
-            array.Add(2);
-            array.Add(3);
-
-            chain.Clear();
-            chain.Add(4);
-            chain.Add(5);
-            chain.Add(6);
-
-            array.Assign(chain);
-
-            if (chain.IsEqual(array))
-            {
-                Console.WriteLine("Assign successfull");
-            }
-            else
-            {
-                Console.WriteLine("Assign error");
-            }
-
-
-            Console.WriteLine("\nTesting AssignTo method:");
-
-            array.Clear();
-            array.Add(1);
-            array.Add(2);
-            array.Add(3);
-
-            chain.Clear();
-            chain.Add(4);
-            chain.Add(5);
-            chain.Add(6);
-
-            chain.AssignTo(array);
-
-            if (chain.IsEqual(array))
-            {
-                Console.WriteLine("AssignTo successfull");
-            }
-            else
-            {
-                Console.WriteLine("AssignTo error");
-            }
-
-            Console.WriteLine("\nTesting Sort method");
-            array.Clear();
-            array.Add(3);
-            array.Add(10);
-            array.Add(1);
-            array.Add(0);
-            array.Add(26);
-            array.Add(7);
-
-            chain.Clear();
-            chain.Add(3);
-            chain.Add(10);
-            chain.Add(1);
-            chain.Add(0);
-            chain.Add(26);
-            chain.Add(7);
-
-            array.Sort();
-            chain.Sort();
-
-            if (chain.IsEqual(array))
-            {
-                Console.WriteLine("Sort successfull");
-            }
-            else
-            {
-                Console.WriteLine("Sort error");
-            }*/
-
-            Console.WriteLine(arr_count_except);
-            Console.WriteLine(chain_count_except);
+            Console.WriteLine($"Кол-во исключений в ArrayList: {arrExCount}\nКол-во исключений в ChainList: {linkedExCount}");
         }
     }
 }
