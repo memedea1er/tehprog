@@ -32,7 +32,7 @@ namespace lab1
                 lastNode.Next = new Node(data, null);
             }
             count++;
-            OnItemAdded(data);
+            OnItemChanged();
         }
 
         public override void Insert(int pos, T data)
@@ -51,7 +51,7 @@ namespace lab1
                 prev.Next = new Node(data, prev.Next);
             }
             count++;
-            OnItemInserted(pos, data);
+            OnItemChanged();
         }
 
         public override void Delete(int pos)
@@ -70,14 +70,14 @@ namespace lab1
                 prev.Next = prev.Next.Next;
             }
             count--;
-            OnItemDeleted(pos);
+            OnItemChanged();
         }
 
         public override void Clear()
         {
             head = null;
             count = 0;
-            OnListCleared();
+            OnItemChanged();
         }
 
         public override T this[int i]
