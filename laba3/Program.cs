@@ -12,6 +12,7 @@ namespace lab1
             BaseList<char> array = new ArrayList<char>();
             BaseList<char> chain = new ChainList<char>();
 
+
             array.AddArrayListEventHandlers();
             chain.AddChainListEventHandlers();
 
