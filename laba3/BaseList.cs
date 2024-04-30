@@ -7,10 +7,7 @@ namespace lab1
         public delegate void ListChangedEventHandler(object sender, ActionEventArgs e);
 
         // События
-        public event ListChangedEventHandler ItemAdded;
-        public event ListChangedEventHandler ItemInserted;
-        public event ListChangedEventHandler ItemDeleted;
-        public event ListChangedEventHandler ListCleared;
+        public event ListChangedEventHandler ItemChanged;
 
         protected int count;
 
@@ -38,24 +35,9 @@ namespace lab1
             Console.WriteLine();
         }
 
-        protected virtual void OnItemAdded(T item)
+        protected virtual void OnItemChanged()
         {
-            ItemAdded?.Invoke(this, new ActionEventArgs("Item Added"));
-        }
-
-        protected virtual void OnItemInserted(int pos, T item)
-        {
-            ItemInserted?.Invoke(this, new ActionEventArgs("Item Inserted at position " + pos));
-        }
-
-        protected virtual void OnItemDeleted(int pos)
-        {
-            ItemDeleted?.Invoke(this, new ActionEventArgs("Item Deleted from position " + pos));
-        }
-
-        protected virtual void OnListCleared()
-        {
-            ListCleared?.Invoke(this, new ActionEventArgs("List Cleared"));
+            ItemChanged?.Invoke(this, new ActionEventArgs("List Changed"));
         }
 
         public void Assign(BaseList<T> source)
@@ -200,18 +182,11 @@ namespace lab1
         }
         public void AddArrayListEventHandlers()
         {
-            ItemAdded += (sender, e) => Console.WriteLine("Элемент был добавлен в ArrayList.");
-            ItemInserted += (sender, e) => Console.WriteLine("Элемент был вставлен в ArrayList.");
-            ItemDeleted += (sender, e) => Console.WriteLine("Элемент был удален из ArrayList.");
-            ListCleared += (sender, e) => Console.WriteLine("ArrayList был очищен.");
+            ItemChanged += (sender, e) => Console.WriteLine("ArrayList был изменён.");
         }
-
         public void AddChainListEventHandlers()
         {
-            ItemAdded += (sender, e) => Console.WriteLine("Элемент был добавлен в ChainList.");
-            ItemInserted += (sender, e) => Console.WriteLine("Элемент был вставлен в ChainList.");
-            ItemDeleted += (sender, e) => Console.WriteLine("Элемент был удален из ChainList.");
-            ListCleared += (sender, e) => Console.WriteLine("ChainList был очищен.");
+            ItemChanged += (sender, e) => Console.WriteLine("ChainList был изменён.");
         }
     }
     public class BadIndexException : Exception
