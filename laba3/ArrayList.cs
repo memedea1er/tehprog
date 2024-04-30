@@ -19,7 +19,7 @@ namespace lab1
             EnsureCapacity();
             array[count] = a;
             count++;
-            OnItemAdded(a);
+            OnItemChanged();
         }
 
         public override void Insert(int pos, T a)
@@ -37,7 +37,7 @@ namespace lab1
 
             array[pos] = a;
             count++;
-            OnItemInserted(pos, a);
+            OnItemChanged();
         }
 
         public override void Delete(int pos)
@@ -51,14 +51,14 @@ namespace lab1
                 array[i] = array[i + 1];
             }
             count--;
-            OnItemDeleted(pos);
+            OnItemChanged();
         }
 
         public override void Clear()
         {
             Array.Resize(ref array, 0);
             count = 0;
-            OnListCleared();
+            OnItemChanged();
         }
 
         public override T this[int i]
